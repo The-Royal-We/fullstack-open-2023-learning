@@ -6,7 +6,7 @@ const Total = ({ course }) => {
     <p>
       Number of exercises{" "}
       {parts.reduce(
-        (accumulator, currentPart) => accumulator + currentPart.exercises,
+        (currentSum, currentPart) => currentSum + currentPart.exercises,
         0
       )}
     </p>
@@ -17,10 +17,9 @@ const Content = ({ course }) => {
   const { parts } = course;
   return (
     <div>
-      {/* Follow KISS principle: There's only ever going to be 3 parts so code approps */}
-      <Part part={parts[0]} />
-      <Part part={parts[1]} />
-      <Part part={parts[2]} />
+      {parts.map((part) => (
+        <Part key={part.id} part={part} />
+      ))}
     </div>
   );
 };
@@ -34,19 +33,33 @@ const Part = ({ part }) => {
   );
 };
 
+const Course = ({ course }) => {
+  return (
+    <div>
+      <Header course={course} />
+      <Content course={course} />
+      <Total course={course} />
+    </div>
+  );
+};
+
 const App = () => {
   const course = {
+    id: 1,
     name: "Half Stack application development",
     parts: [
       {
+        id: 1,
         name: "Fundamentals of React",
         exercises: 10,
       },
       {
+        id: 2,
         name: "Using props to pass data",
         exercises: 7,
       },
       {
+        id: 3,
         name: "State of a component",
         exercises: 14,
       },
@@ -55,11 +68,7 @@ const App = () => {
 
   return (
     // Possible best practice: Pass same object if possible
-    <div>
-      <Header course={course} />
-      <Content course={course} />
-      <Total course={course} />
-    </div>
+    <Course course={course} />
   );
 };
 
