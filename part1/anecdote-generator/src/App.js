@@ -4,6 +4,13 @@ const Button = ({ text, handleClick }) => (
   <button onClick={handleClick}>{text}</button>
 );
 
+const AnecdoteLine = ({ anecdote, votes }) => (
+  <div>
+    <p>{anecdote}</p>
+    <p>has {votes} votes</p>
+  </div>
+);
+
 const App = () => {
   const anecdotes = [
     "If it hurts, do it more often.",
@@ -32,12 +39,31 @@ const App = () => {
     setSelected(randomIndex);
   };
 
+  const indexWithMostVotes = voteArray.reduce(
+    (indexWithBiggestValue, currentValue, currentIndex, arr) => {
+      return currentValue > arr[indexWithBiggestValue]
+        ? currentIndex
+        : indexWithBiggestValue;
+    },
+    0
+  );
+
   return (
     <div id="App">
-      <p>{anecdotes[selected]}</p>
-      <div>
+      <div id="anecdote_of_day">
+        <h2>Anecdote of the day</h2>
+        <AnecdoteLine
+          anecdote={anecdotes[selected]}
+          votes={voteArray[selected]}
+        />
         <Button text={"vote"} handleClick={voteForSelectedAnecdote} />
         <Button text={"Generate an anecdote"} handleClick={randomlySelect} />
+      </div>
+      <div id="most_voted_anecdote">
+        <AnecdoteLine
+          anecdote={anecdotes[indexWithMostVotes]}
+          votes={voteArray[indexWithMostVotes]}
+        />
       </div>
     </div>
   );
