@@ -30,18 +30,25 @@ const App = () => {
     }
   };
 
+  let total = goodCounter + neutralCounter + badCounter;
+  let average = (goodCounter - badCounter) / total;
+  let positivePercentage = (goodCounter / total) * 100;
+
   return (
     <div>
       <div id="feedback">
         <h1>Give feedback</h1>
         <Button text={"good"} handleClick={updateCounter("good")} />
         <Button text={"neutral"} handleClick={updateCounter("neutral")} />
-        <Button text={"good"} handleClick={updateCounter("bad")} />
+        <Button text={"bad"} handleClick={updateCounter("bad")} />
       </div>
       <div id="statistics">
         <p>good {goodCounter}</p>
         <p>neutralCounter {neutralCounter}</p>
         <p>badCounter {badCounter}</p>
+        <p>all {total}</p>
+        <p>average {average}</p>
+        <p>positivePercentage {positivePercentage}%</p>
       </div>
     </div>
   );
