@@ -6,11 +6,29 @@ import Form from "./components/Form";
 
 import { getAll, create, deletePerson, update } from "./services/persons";
 
+const Notification = ({ name }) => {
+  if (name === null) {
+    return null;
+  }
+
+  const style = {
+    color: "green",
+    background: "lightgrey",
+    "font-size": "20px",
+    "border-style": "solid",
+    "border-radius": "5px",
+    padding: "10px",
+    "margin-bottom": "10px",
+  };
+  return <div style={style}>Added {name}</div>;
+};
+
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filterInput, setFilterInput] = useState("");
+  const [nameRecentlyAdded, setNameRecentlyAdded] = useState(null);
 
   useEffect(() => {
     getAll().then((personsData) => {
@@ -68,7 +86,11 @@ const App = () => {
         .then((personData) => {
           setPersons(persons.concat(personData));
         })
-        .finally(clearPhonebookEntryInputs());
+        .finally(() => {
+          clearPhonebookEntryInputs();
+          setNameRecentlyAdded(newName);
+          setTimeout(() => setNameRecentlyAdded(null), 5000);
+        });
     }
   };
 
@@ -84,6 +106,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification name={nameRecentlyAdded} />
       <Filter handleFilterInputChange={handleFilterInputChange} />
       <div>
         <h3>add a new entry</h3>
