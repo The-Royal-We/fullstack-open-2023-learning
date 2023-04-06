@@ -14,8 +14,6 @@ const App = () => {
     setFilterInput("");
   }, []);
 
-  useEffect(() => {}, [selectedCountry]);
-
   const handleFilterInputChange = (event) => {
     setFilterInput(event.target.value.toLowerCase());
     setSelectedCountry(null);

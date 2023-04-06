@@ -1,4 +1,41 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { getWeather } from "../services/weather";
+
+const WeatherInfo = ({ latlng, capital }) => {
+  const [currentWeatherInfo, setCurrentWeatherInfo] = useState(null);
+
+  useEffect(() => {
+    getWeather(latlng)
+      .then((weatherData) => {
+        setCurrentWeatherInfo(weatherData.list[0]);
+      })
+      .catch((err) => console.log(err));
+  }, [latlng]);
+
+  if (!currentWeatherInfo) {
+    return null;
+  }
+
+  const {
+    main: { temp },
+    weather,
+    wind: { speed },
+  } = currentWeatherInfo;
+
+  const { icon, description } = weather[0];
+
+  return (
+    <div>
+      <h3>Weather in {capital}</h3>
+      <p>temperature: {temp} Celsius</p>
+      <img
+        src={`https://openweathermap.org/img/wn/${icon}@2x.png`}
+        alt={description}
+      />
+      <p>speed: {speed} m/s</p>
+    </div>
+  );
+};
 
 const CountryLineSummary = ({ countryName, handleSelectCountry }) => (
   <p>
@@ -10,9 +47,9 @@ const CountryLineSummary = ({ countryName, handleSelectCountry }) => (
 const CountryDetail = ({ name, capital, area, languages, flags }) => {
   const capitalDisplay =
     capital.length > 1 ? (
-      <div>Captitals {capital.join()}</div>
+      <div>capitals {capital.join()}</div>
     ) : (
-      <div>Captital {capital[0]}</div>
+      <div>capital {capital[0]}</div>
     );
 
   return (
@@ -34,18 +71,21 @@ const CountryDetail = ({ name, capital, area, languages, flags }) => {
 };
 
 const CountryDetailView = ({ country }) => {
-  const { capital, area, languages, flags, name } = country;
+  const { capital, area, languages, flags, name, latlng } = country;
   const { common } = name;
 
   return (
-    <CountryDetail
-      key={common}
-      name={common}
-      capital={capital}
-      area={area}
-      languages={Object.values(languages)}
-      flags={flags}
-    />
+    <div>
+      <CountryDetail
+        key={common}
+        name={common}
+        capital={capital}
+        area={area}
+        languages={Object.values(languages)}
+        flags={flags}
+      />
+      <WeatherInfo latlng={latlng} capital={capital} />
+    </div>
   );
 };
 
