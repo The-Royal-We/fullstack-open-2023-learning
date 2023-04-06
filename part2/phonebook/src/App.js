@@ -4,7 +4,7 @@ import Filter from "./components/Filter";
 import NumberList from "./components/NumberList";
 import Form from "./components/Form";
 
-import { getAll, create } from "./services/persons";
+import { getAll, create, deletePerson } from "./services/persons";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -50,6 +50,16 @@ const App = () => {
     }
   };
 
+  const onDeleteHandler = (id, name) => () => {
+    if (window.confirm(`Delete ${name} ?`)) {
+      deletePerson(id).then(() => {
+        console.log(`Deletion of ${name} successful`);
+        // do I need to get all? no i just need to update state to filter that person out
+        setPersons(persons.filter((p) => p.id !== id));
+      });
+    }
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -65,7 +75,11 @@ const App = () => {
         />
       </div>
       <h2>Numbers</h2>
-      <NumberList persons={persons} searchFilter={filterInput} />
+      <NumberList
+        persons={persons}
+        searchFilter={filterInput}
+        onDeleteHandler={onDeleteHandler}
+      />
     </div>
   );
 };
