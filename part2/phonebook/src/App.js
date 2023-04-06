@@ -6,7 +6,9 @@ import Form from "./components/Form";
 
 import { getAll, create, deletePerson, update } from "./services/persons";
 
-const Notification = ({ name }) => {
+// There are common things between these 2
+
+const ContactAddedNotification = ({ name }) => {
   if (name === null) {
     return null;
   }
@@ -14,13 +16,31 @@ const Notification = ({ name }) => {
   const style = {
     color: "green",
     background: "lightgrey",
-    "font-size": "20px",
-    "border-style": "solid",
-    "border-radius": "5px",
+    fontSize: "20px",
+    borderStyle: "solid",
+    borderRadius: "5px",
     padding: "10px",
-    "margin-bottom": "10px",
+    marginBottom: "10px",
   };
   return <div style={style}>Added {name}</div>;
+};
+
+const ErrorMessageNotification = ({ message }) => {
+  if (message === null) {
+    return null;
+  }
+
+  const style = {
+    color: "red",
+    background: "lightgrey",
+    fontSize: "20px",
+    borderStyle: "solid",
+    borderRadius: "5px",
+    padding: "10px",
+    marginBottom: "10px",
+  };
+
+  return <div style={style}>{message}</div>;
 };
 
 const App = () => {
@@ -29,6 +49,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [filterInput, setFilterInput] = useState("");
   const [nameRecentlyAdded, setNameRecentlyAdded] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     getAll().then((personsData) => {
@@ -73,6 +94,15 @@ const App = () => {
               persons.map((p) => (p.id !== savedPerson.id ? p : savedPerson))
             );
           })
+          .catch(() => {
+            setErrorMessage(
+              `Information of ${updatedPerson.name} has already been removed from server.`
+            );
+            setTimeout(() => {
+              setErrorMessage(null);
+            }, 5000);
+            setPersons(persons.filter((p) => p.id !== updatedPerson.id));
+          })
           .finally(clearPhonebookEntryInputs());
       } else {
         console.warn(`Not updating ${newName}`);
@@ -106,7 +136,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification name={nameRecentlyAdded} />
+      <ContactAddedNotification name={nameRecentlyAdded} />
+      <ErrorMessageNotification message={errorMessage} />
       <Filter handleFilterInputChange={handleFilterInputChange} />
       <div>
         <h3>add a new entry</h3>
