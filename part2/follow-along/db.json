@@ -34,11 +34,6 @@
       "content": "this is a test",
       "important": true,
       "id": 7
-    },
-    {
-      "content": "ADSF1234",
-      "important": false,
-      "id": 8
     }
   ]
 }
