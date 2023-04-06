@@ -8,21 +8,21 @@ const App = () => {
 
   useEffect(() => {
     getAllCountries().then((countriesData) => {
-      setCountries(countriesData.map((country) => country.name.common));
+      setCountries(countriesData);
     });
     setFilterInput("");
   }, []);
 
   const handleFilterInputChange = (event) => {
-    setFilterInput(event.target.value);
+    setFilterInput(event.target.value.toLowerCase());
   };
 
   if (!countries) {
     return null;
   }
 
-  const countriesToRender = countries.filter((name) =>
-    name.toLowerCase().includes(filterInput.toLowerCase())
+  const countriesToRender = countries.filter((country) =>
+    country.name.common.toLowerCase().includes(filterInput)
   );
 
   return (
