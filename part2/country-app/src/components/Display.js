@@ -1,6 +1,11 @@
 import React from "react";
 
-const CountryLineSummary = ({ summary }) => <p>{summary}</p>;
+const CountryLineSummary = ({ countryName, handleSelectCountry }) => (
+  <p>
+    {countryName}
+    <button onClick={handleSelectCountry(countryName)}>show</button>
+  </p>
+);
 
 const CountryDetail = ({ name, capital, area, languages, flags }) => {
   const capitalDisplay =
@@ -28,30 +33,46 @@ const CountryDetail = ({ name, capital, area, languages, flags }) => {
   );
 };
 
-const Display = ({ countriesToRender }) => {
-  if (countriesToRender.length > 10) {
-    return <div>Too many matches, refine filter</div>;
-  } else if (countriesToRender.length === 1) {
-    const country = countriesToRender[0];
-    const { capital, area, languages, flags, name } = country;
-    const { common } = name;
+const CountryDetailView = ({ country }) => {
+  const { capital, area, languages, flags, name } = country;
+  const { common } = name;
 
-    return (
-      <CountryDetail
-        key={common}
-        name={common}
-        capital={capital}
-        area={area}
-        languages={Object.values(languages)}
-        flags={flags}
-      />
-    );
+  return (
+    <CountryDetail
+      key={common}
+      name={common}
+      capital={capital}
+      area={area}
+      languages={Object.values(languages)}
+      flags={flags}
+    />
+  );
+};
+
+const Display = ({
+  countrySummaries,
+  selectedCountry,
+  handleSelectCountry,
+}) => {
+  if (countrySummaries.length > 10) {
+    return <div>Too many matches, refine filter</div>;
+  }
+  if (selectedCountry) {
+    return <CountryDetailView country={selectedCountry} />;
+  } else if (countrySummaries.length === 1) {
+    return <CountryDetailView country={countrySummaries[0]} />;
   } else {
     return (
       <div>
-        {countriesToRender.map((country) => {
+        {countrySummaries.map((country) => {
           const name = country.name.common;
-          return <CountryLineSummary key={name} summary={name} />;
+          return (
+            <CountryLineSummary
+              key={name}
+              countryName={name}
+              handleSelectCountry={handleSelectCountry}
+            />
+          );
         })}
       </div>
     );
