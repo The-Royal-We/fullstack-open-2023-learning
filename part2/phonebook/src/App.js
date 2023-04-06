@@ -4,7 +4,7 @@ import Filter from "./components/Filter";
 import NumberList from "./components/NumberList";
 import Form from "./components/Form";
 
-import { getAll, create, deletePerson } from "./services/persons";
+import { getAll, create, deletePerson, update } from "./services/persons";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -30,23 +30,45 @@ const App = () => {
     setNewNumber(event.target.value);
   };
 
+  const clearPhonebookEntryInputs = () => {
+    setNewName("");
+    setNewNumber("");
+  };
+
   const handleOnSubmit = (event) => {
     event.preventDefault();
-    const newPerson = {
-      name: newName,
-      number: newNumber,
-    };
-    if (persons.find((person) => person.name === newName)) {
-      window.alert(`${newName} is already added to the phone book`);
+    const person = persons.find((person) => person.name === newName);
+    if (person) {
+      if (
+        window.confirm(
+          `${person.name} is already added to phonebook, update existing contact?`
+        )
+      ) {
+        console.log(`Updating ${person.name}`);
+        const updatedPerson = {
+          ...person,
+          number: newNumber,
+        };
+        update(updatedPerson.id, updatedPerson)
+          .then((savedPerson) => {
+            setPersons(
+              persons.map((p) => (p.id !== savedPerson.id ? p : savedPerson))
+            );
+          })
+          .finally(clearPhonebookEntryInputs());
+      } else {
+        console.warn(`Not updating ${newName}`);
+      }
     } else {
+      const newPerson = {
+        name: newName,
+        number: newNumber,
+      };
       create(newPerson)
         .then((personData) => {
           setPersons(persons.concat(personData));
         })
-        .finally(() => {
-          setNewName("");
-          setNewNumber("");
-        });
+        .finally(clearPhonebookEntryInputs());
     }
   };
 
@@ -54,7 +76,6 @@ const App = () => {
     if (window.confirm(`Delete ${name} ?`)) {
       deletePerson(id).then(() => {
         console.log(`Deletion of ${name} successful`);
-        // do I need to get all? no i just need to update state to filter that person out
         setPersons(persons.filter((p) => p.id !== id));
       });
     }
