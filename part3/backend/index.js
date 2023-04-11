@@ -1,17 +1,12 @@
 const { request, response } = require("express");
 const express = require("express");
+const cors = require("cors");
+
 const app = express();
 
-const logRequest = (request, _response, next) => {
-  console.log("request.method", request.method);
-  console.log("request.path", request.path);
-  console.log("request.body", request.body);
-  console.log("---");
-  next();
-};
-
 app.use(express.json()); // allows express to parse json payloads
-app.use(logRequest);
+app.use(cors());
+app.use(express.static("build"));
 
 let notes = [
   {
@@ -81,7 +76,7 @@ app.post("/api/notes", (request, response) => {
   response.json(note);
 });
 
-const PORT = 3001;
+const PORT = process.env.PORT || "8080";
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });

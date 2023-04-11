@@ -34,7 +34,7 @@ const App = () => {
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState("a new note..."); //to make this controlled by the app, **we** need to handle the state changes
   const [showAll, setShowAll] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("some error happened...");
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const notesToShow = showAll ? notes : notes.filter((note) => note.important);
 
