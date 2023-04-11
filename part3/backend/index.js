@@ -2,7 +2,16 @@ const { request, response } = require("express");
 const express = require("express");
 const app = express();
 
+const logRequest = (request, _response, next) => {
+  console.log("request.method", request.method);
+  console.log("request.path", request.path);
+  console.log("request.body", request.body);
+  console.log("---");
+  next();
+};
+
 app.use(express.json()); // allows express to parse json payloads
+app.use(logRequest);
 
 let notes = [
   {
@@ -76,3 +85,8 @@ const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: "unknown endpoint" });
+};
+app.use(unknownEndpoint);
