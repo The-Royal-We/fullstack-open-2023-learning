@@ -115,11 +115,16 @@ const App = () => {
       create(newPerson)
         .then((personData) => {
           setPersons(persons.concat(personData));
-        })
-        .finally(() => {
           clearPhonebookEntryInputs();
           setNameRecentlyAdded(newName);
           setTimeout(() => setNameRecentlyAdded(null), 5000);
+        })
+        .catch((err) => {
+          const message = err.response.data.error;
+          setErrorMessage(message);
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 5000);
         });
     }
   };
