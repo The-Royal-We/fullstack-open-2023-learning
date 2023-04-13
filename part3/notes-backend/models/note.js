@@ -1,12 +1,4 @@
-const mongoose = require("mongoose");
-
-const url = process.env.MONGODB_URI;
-
-mongoose.set("strictQuery", false);
-mongoose
-  .connect(url)
-  .then((_res) => console.log("connected to MongoDB"))
-  .catch((err) => console.log("error connecting to mongodb", err));
+const mongoose = require('mongoose');
 
 const noteSchema = new mongoose.Schema({
   content: {
@@ -17,14 +9,17 @@ const noteSchema = new mongoose.Schema({
   important: Boolean,
 });
 
-noteSchema.set("toJSON", {
+noteSchema.set('toJSON', {
   transform: (_document, returnedObj) => {
-    returnedObj.id = returnedObj._id.toString();
-    delete returnedObj._id;
-    delete returnedObj.__v;
+    const { content, important, _id } = returnedObj;
+    return {
+      content,
+      important,
+      id: _id.toString(),
+    };
   },
 });
 
-const Note = mongoose.model("Note", noteSchema);
+const Note = mongoose.model('Note', noteSchema);
 
 module.exports = Note;
