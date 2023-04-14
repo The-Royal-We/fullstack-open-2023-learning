@@ -10,18 +10,25 @@ const password = process.argv[2];
 const url = `mongodb+srv://fullstack:${password}@cluster0.1iijure.mongodb.net/testNoteApp?retryWrites=true&w=majority`;
 
 mongoose.set('strictQuery', false);
-mongoose.connect(url);
 
-const noteSchema = new mongoose.Schema({
-  content: String,
-  important: Boolean,
-});
+mongoose
+  .connect(url)
+  .then(() => {
+    const noteSchema = new mongoose.Schema({
+      content: String,
+      important: Boolean,
+    });
 
-const Note = mongoose.model('Note', noteSchema);
+    const Note = mongoose.model('Note', noteSchema);
 
-Note.find({ important: false }).then((result) => {
-  result.forEach((note) => {
-    console.log('note', note);
-  });
-  mongoose.connection.close();
-});
+    const newNote = new Note({
+      content: 'HTML is easy',
+      important: true,
+    });
+
+    newNote.save().then((response) => {
+      console.log(response);
+      mongoose.connection.close();
+    });
+  })
+  .catch((err) => console.log('err', err));
