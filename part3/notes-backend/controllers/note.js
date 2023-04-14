@@ -22,24 +22,26 @@ noteRouter.post('/', async (request, response, next) => {
   }
 });
 
-noteRouter.get('/:id', (request, response, next) => {
-  Note.findById(request.params.id)
-    .then((note) => {
-      if (note) {
-        response.json(note);
-      } else {
-        response.status(404).end();
-      }
-    })
-    .catch((error) => next(error));
+noteRouter.get('/:id', async (request, response, next) => {
+  try {
+    const retrievedNote = await Note.findById(request.params.id);
+    if (retrievedNote) {
+      response.json(retrievedNote);
+    } else {
+      response.status(404).end();
+    }
+  } catch (err) {
+    next(err);
+  }
 });
 
-noteRouter.delete('/:id', (request, response, next) => {
-  Note.findByIdAndRemove(request.params.id)
-    .then(() => {
-      response.status(204).end();
-    })
-    .catch((err) => next(err));
+noteRouter.delete('/:id', async (request, response, next) => {
+  try {
+    await Note.findByIdAndRemove(request.params.id);
+    response.status(204).end();
+  } catch (err) {
+    next(err);
+  }
 });
 
 noteRouter.put('/:id', (request, response, next) => {
