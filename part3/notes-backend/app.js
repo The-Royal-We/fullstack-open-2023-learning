@@ -5,6 +5,7 @@ const notesRouter = require('./controllers/note');
 const config = require('./utils/config');
 const middleware = require('./utils/middleware');
 const logger = require('./utils/logger');
+
 const app = express();
 
 mongoose.set('strictQuery', false);
@@ -13,7 +14,7 @@ logger.info('connecting to ', config.MONGODB_URI);
 
 mongoose
   .connect(config.MONGODB_URI)
-  .then(() => console.log('connected to MongoDB'))
+  .then(() => logger.info('connected to MongoDB'))
   .catch((err) => console.log('error connecting to mongodb', err));
 
 app.use(cors());
