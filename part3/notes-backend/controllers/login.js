@@ -20,7 +20,9 @@ loginRouter.post('/', async (request, response) => {
   // eslint-disable-next-line no-underscore-dangle
   const userForToken = { username: user.username, id: user._id };
 
-  const token = jwt.sign(userForToken, process.env.SECRET);
+  const token = jwt.sign(userForToken, process.env.SECRET, {
+    expiresIn: 60 * 60,
+  });
 
   return response
     .status(200)

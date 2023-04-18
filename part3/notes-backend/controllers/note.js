@@ -20,9 +20,6 @@ noteRouter.get('/', async (_request, response) => {
 
 noteRouter.post('/', async (request, response) => {
   const { body } = request;
-
-  const token = getTokenFrom(request);
-  console.log(token);
   const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET);
   if (!decodedToken.id) {
     return response.status(401).json({ error: 'token invalid' });
