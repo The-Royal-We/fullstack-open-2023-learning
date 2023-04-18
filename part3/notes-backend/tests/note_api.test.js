@@ -6,13 +6,21 @@ const app = require('../app');
 const Note = require('../models/note');
 
 const api = supertest(app);
-
+let activeToken;
 beforeEach(async () => {
+  await helper.initialiseUsers();
   await Note.deleteMany({});
 
   const noteObjects = helper.initialNotes.map((note) => new Note(note));
   const promiseArray = noteObjects.map((note) => note.save());
+
   await Promise.all(promiseArray);
+
+  const { body } = await api
+    .post('/api/login')
+    .send({ username: 'root', password: 'sekret' })
+    .expect(200);
+  activeToken = `Bearer ${body.token}`;
 });
 
 test('notes are returned as json', async () => {
@@ -45,6 +53,7 @@ test('a valid note can be added', async () => {
   await api
     .post('/api/notes')
     .send(newNote)
+    .set('Authorization', activeToken)
     .expect(201)
     .expect('Content-Type', /application\/json/);
 
@@ -60,7 +69,11 @@ test('note without content is not added', async () => {
     important: true,
   };
 
-  await api.post('/api/notes').send(newNote).expect(400);
+  await api
+    .post('/api/notes')
+    .send(newNote)
+    .set('Authorization', activeToken)
+    .expect(400);
 
   const notesAtEnd = await helper.notesInDb();
 
