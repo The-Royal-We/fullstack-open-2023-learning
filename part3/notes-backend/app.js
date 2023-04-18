@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const notesRouter = require('./controllers/note');
+const usersRouter = require('./controllers/user');
 const config = require('./utils/config');
 const middleware = require('./utils/middleware');
 const logger = require('./utils/logger');
@@ -23,6 +24,7 @@ app.use(express.json());
 app.use(middleware.requestLogger);
 
 app.use('/api/notes', notesRouter);
+app.use('/api/users', usersRouter);
 
 app.get('/', (_request, response) => {
   response.send('<h1>Hello, World</h1>');
