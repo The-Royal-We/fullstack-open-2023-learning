@@ -20,10 +20,11 @@ const userSchema = new mongoose.Schema({
 userSchema.plugin(uniqueValidator);
 
 userSchema.set('toJSON', {
-  transform: (_document, { username, name, _id }) => ({
+  transform: (_document, { username, name, _id, notes }) => ({
     username,
     name,
     id: _id.toString(),
+    notes,
   }),
 });
 

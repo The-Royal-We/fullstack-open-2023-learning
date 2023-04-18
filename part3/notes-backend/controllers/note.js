@@ -1,6 +1,8 @@
 const noteRouter = require('express').Router();
 require('express-async-errors');
+
 const Note = require('../models/note');
+const User = require('../models/user');
 
 noteRouter.get('/', async (_request, response) => {
   const notes = await Note.find({});
@@ -10,12 +12,19 @@ noteRouter.get('/', async (_request, response) => {
 noteRouter.post('/', async (request, response) => {
   const { body } = request;
 
+  const user = await User.findById(body.userId);
+
   const note = new Note({
     content: body.content,
     important: body.important || false,
+    user: user.id,
   });
 
   const savedNote = await note.save();
+  // eslint-disable-next-line no-underscore-dangle
+  user.notes = user.notes.concat(savedNote._id);
+
+  await user.save();
   response.status(201).json(savedNote);
 });
 

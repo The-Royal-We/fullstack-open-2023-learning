@@ -57,4 +57,12 @@ describe('when there is initially one user in db', () => {
     const usersAtEnd = await helper.usersInDb();
     expect(usersAtEnd).toHaveLength(usersAtStart.length);
   });
+
+  test('we can get all users', async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const { body } = await api.get('/api/users');
+
+    expect(body).toHaveLength(usersAtStart.length);
+  });
 });
