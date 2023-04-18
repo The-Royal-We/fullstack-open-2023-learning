@@ -6,17 +6,21 @@ const noteSchema = new mongoose.Schema({
     minLength: 5,
     required: true,
   },
-  user: String,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
   important: Boolean,
 });
 
 noteSchema.set('toJSON', {
   transform: (_document, returnedObj) => {
-    const { content, important, _id } = returnedObj;
+    const { content, important, _id, user } = returnedObj;
     return {
       content,
       important,
       id: _id.toString(),
+      user,
     };
   },
 });
