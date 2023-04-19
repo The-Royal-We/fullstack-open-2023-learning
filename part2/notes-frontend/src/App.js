@@ -2,7 +2,7 @@ import Note from './components/Note';
 import LoginForm from './components/LoginForm';
 import NoteForm from './components/NoteForm';
 import { useState, useEffect } from 'react';
-import { getAll, create, update } from './services/notes';
+import { getAll, create, update, setToken } from './services/notes';
 import { login } from './services/login';
 import './index.css';
 
@@ -44,6 +44,14 @@ const App = () => {
 
   const notesToShow = showAll ? notes : notes.filter((note) => note.important);
 
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser');
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON);
+      setUser(user);
+      setToken(user.token);
+    }
+  }, []);
   useEffect(() => {
     console.log('effect');
     getAll().then((initialNotes) => {
@@ -95,6 +103,8 @@ const App = () => {
       setUser(user);
       setUsername('');
       setPassword('');
+      window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user));
+      setToken(user.token);
     } catch (exception) {
       setErrorMessage('Wrong credentials');
       setTimeout(() => {
