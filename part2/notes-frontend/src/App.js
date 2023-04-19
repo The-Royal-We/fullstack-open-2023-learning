@@ -1,12 +1,13 @@
-import Note from "./components/Note";
-import { useState, useEffect } from "react";
-import { getAll, create, update } from "./services/notes";
-import "./index.css";
+import Note from './components/Note';
+import { useState, useEffect } from 'react';
+import { getAll, create, update } from './services/notes';
+import { login } from './services/login';
+import './index.css';
 
 const Footer = () => {
   const footerStyle = {
-    color: "green",
-    fontStyle: "italic",
+    color: 'green',
+    fontStyle: 'italic',
     fontSize: 16,
   };
   return (
@@ -32,14 +33,17 @@ const Notification = ({ message }) => {
 
 const App = () => {
   const [notes, setNotes] = useState([]);
-  const [newNote, setNewNote] = useState("a new note..."); //to make this controlled by the app, **we** need to handle the state changes
+  const [newNote, setNewNote] = useState('a new note...'); //to make this controlled by the app, **we** need to handle the state changes
   const [showAll, setShowAll] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [user, setUser] = useState(null);
 
   const notesToShow = showAll ? notes : notes.filter((note) => note.important);
 
   useEffect(() => {
-    console.log("effect");
+    console.log('effect');
     getAll().then((initialNotes) => {
       setNotes(initialNotes);
     });
@@ -51,7 +55,7 @@ const App = () => {
 
   const addNote = (event) => {
     event.preventDefault();
-    console.log("button clicked", event.target);
+    console.log('button clicked', event.target);
     const noteObject = {
       content: newNote,
       important: Math.random() < 0.5,
@@ -59,7 +63,7 @@ const App = () => {
 
     create(noteObject).then((createdNote) => {
       setNotes(notes.concat(createdNote)); // remember: notes.concat returns a copy of the array with the object added
-      setNewNote("");
+      setNewNote('');
     });
   };
 
@@ -75,20 +79,75 @@ const App = () => {
       })
       .catch((error) => {
         setErrorMessage(
-          `the note '${note.content} was already deleted from the server'`
+          `the note '${note.content} was already deleted from the server'`,
         );
         setTimeout(() => setErrorMessage(null), 5000);
         setNotes(notes.filter((n) => n.id !== id));
       });
   };
 
+  const loginForm = () => (
+    <form onSubmit={handleLogin}>
+      <div>
+        username
+        <input
+          type="text"
+          value={username}
+          name="Username"
+          onChange={({ target: { value } }) => setUsername(value)}
+        />
+      </div>
+      <div>
+        password
+        <input
+          type="password"
+          value={password}
+          name="Password"
+          onChange={({ target: { value } }) => setPassword(value)}
+        />
+      </div>
+      <div>
+        <button type="submit">login</button>
+      </div>
+    </form>
+  );
+
+  const noteForm = () => (
+    <form onSubmit={addNote}>
+      <input value={newNote} onChange={handleNoteChange} />
+      <button type="submit">save</button>
+    </form>
+  );
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const user = await login({ username, password });
+      setUser(user);
+      setUsername('');
+      setPassword('');
+    } catch (exception) {
+      setErrorMessage('Wrong credentials');
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+    }
+  };
+
   return (
     <div>
       <h1>Notes</h1>
       <Notification message={errorMessage} />
+      {!user && loginForm()}
+      {user && (
+        <div>
+          <p>{user.name} logged in</p>
+          {noteForm()}
+        </div>
+      )}
       <div>
         <button onClick={() => setShowAll(!showAll)}>
-          show {showAll ? "important" : "all"}
+          show {showAll ? 'important' : 'all'}
         </button>
       </div>
       <ul>
@@ -100,10 +159,7 @@ const App = () => {
           />
         ))}
       </ul>
-      <form onSubmit={addNote}>
-        <input value={newNote} onChange={handleNoteChange} />
-        <button type="submit">save</button>
-      </form>
+
       <Footer />
     </div>
   );
