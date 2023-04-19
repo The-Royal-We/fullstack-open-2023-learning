@@ -1,4 +1,6 @@
 import Note from './components/Note';
+import LoginForm from './components/LoginForm';
+import NoteForm from './components/NoteForm';
 import { useState, useEffect } from 'react';
 import { getAll, create, update } from './services/notes';
 import { login } from './services/login';
@@ -86,39 +88,6 @@ const App = () => {
       });
   };
 
-  const loginForm = () => (
-    <form onSubmit={handleLogin}>
-      <div>
-        username
-        <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target: { value } }) => setUsername(value)}
-        />
-      </div>
-      <div>
-        password
-        <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target: { value } }) => setPassword(value)}
-        />
-      </div>
-      <div>
-        <button type="submit">login</button>
-      </div>
-    </form>
-  );
-
-  const noteForm = () => (
-    <form onSubmit={addNote}>
-      <input value={newNote} onChange={handleNoteChange} />
-      <button type="submit">save</button>
-    </form>
-  );
-
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -138,11 +107,23 @@ const App = () => {
     <div>
       <h1>Notes</h1>
       <Notification message={errorMessage} />
-      {!user && loginForm()}
+      {!user && (
+        <LoginForm
+          username={username}
+          handleUsernameOnChange={({ target: { value } }) => setUsername(value)}
+          password={password}
+          handlePasswordOnChange={({ target: { value } }) => setPassword(value)}
+          handleLogin={handleLogin}
+        />
+      )}
       {user && (
         <div>
           <p>{user.name} logged in</p>
-          {noteForm()}
+          <NoteForm
+            handleNoteChange={handleNoteChange}
+            handleOnSubmit={addNote}
+            value={newNote}
+          />
         </div>
       )}
       <div>
