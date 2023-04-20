@@ -12,7 +12,6 @@ const LoginForm = ({
         type="text"
         value={username}
         name="Username"
-        // onChange={({ target: { value } }) => setUsername(value)}
         onChange={handleUsernameOnChange}
       />
     </div>

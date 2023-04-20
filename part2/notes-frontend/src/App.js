@@ -1,6 +1,7 @@
 import Note from './components/Note';
 import LoginForm from './components/LoginForm';
 import NoteForm from './components/NoteForm';
+import Toggleable from './components/Toggleable';
 import { useState, useEffect } from 'react';
 import { getAll, create, update, setToken } from './services/notes';
 import { login } from './services/login';
@@ -34,6 +35,7 @@ const Notification = ({ message }) => {
 };
 
 const App = () => {
+  const [loginVisible, setLoginVisible] = useState(false);
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState('a new note...'); //to make this controlled by the app, **we** need to handle the state changes
   const [showAll, setShowAll] = useState(true);
@@ -43,6 +45,32 @@ const App = () => {
   const [user, setUser] = useState(null);
 
   const notesToShow = showAll ? notes : notes.filter((note) => note.important);
+
+  const loginForm = () => {
+    return (
+      <Toggleable buttonLabel={'reveal'}>
+        <LoginForm
+          username={username}
+          handleUsernameOnChange={({ target: { value } }) => setUsername(value)}
+          password={password}
+          handlePasswordOnChange={({ target: { value } }) => setPassword(value)}
+          handleLogin={handleLogin}
+        />
+      </Toggleable>
+    );
+  };
+
+  const noteForm = () => {
+    return (
+      <Toggleable buttonLabel={'new note'}>
+        <NoteForm
+          handleNoteChange={handleNoteChange}
+          handleOnSubmit={addNote}
+          value={newNote}
+        />
+      </Toggleable>
+    );
+  };
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser');
@@ -117,23 +145,11 @@ const App = () => {
     <div>
       <h1>Notes</h1>
       <Notification message={errorMessage} />
-      {!user && (
-        <LoginForm
-          username={username}
-          handleUsernameOnChange={({ target: { value } }) => setUsername(value)}
-          password={password}
-          handlePasswordOnChange={({ target: { value } }) => setPassword(value)}
-          handleLogin={handleLogin}
-        />
-      )}
+      {!user && loginForm()}
       {user && (
         <div>
           <p>{user.name} logged in</p>
-          <NoteForm
-            handleNoteChange={handleNoteChange}
-            handleOnSubmit={addNote}
-            value={newNote}
-          />
+          {noteForm()}
         </div>
       )}
       <div>
