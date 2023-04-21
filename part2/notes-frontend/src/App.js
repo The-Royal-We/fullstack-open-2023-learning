@@ -2,7 +2,7 @@ import Note from './components/Note';
 import LoginForm from './components/LoginForm';
 import NoteForm from './components/NoteForm';
 import Toggleable from './components/Toggleable';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { getAll, create, update, setToken } from './services/notes';
 import { login } from './services/login';
 import './index.css';
@@ -39,9 +39,12 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [user, setUser] = useState(null);
 
+  const noteFormRef = useRef();
+
   const notesToShow = showAll ? notes : notes.filter((note) => note.important);
 
   const addNote = (noteObject) => {
+    noteFormRef.current.toggleVisibility();
     create(noteObject).then((returnedNote) =>
       setNotes(notes.concat(returnedNote)),
     );
@@ -57,7 +60,7 @@ const App = () => {
 
   const noteForm = () => {
     return (
-      <Toggleable buttonLabel={'new note'}>
+      <Toggleable buttonLabel={'new note'} ref={noteFormRef}>
         <NoteForm createNote={addNote} />
       </Toggleable>
     );
