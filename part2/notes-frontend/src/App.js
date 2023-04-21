@@ -35,7 +35,6 @@ const Notification = ({ message }) => {
 };
 
 const App = () => {
-  const [loginVisible, setLoginVisible] = useState(false);
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState('a new note...'); //to make this controlled by the app, **we** need to handle the state changes
   const [showAll, setShowAll] = useState(true);
@@ -45,6 +44,12 @@ const App = () => {
   const [user, setUser] = useState(null);
 
   const notesToShow = showAll ? notes : notes.filter((note) => note.important);
+
+  const addNote = (noteObject) => {
+    create(noteObject).then((returnedNote) =>
+      setNotes(notes.concat(returnedNote)),
+    );
+  };
 
   const loginForm = () => {
     return (
@@ -63,11 +68,7 @@ const App = () => {
   const noteForm = () => {
     return (
       <Toggleable buttonLabel={'new note'}>
-        <NoteForm
-          handleNoteChange={handleNoteChange}
-          handleOnSubmit={addNote}
-          value={newNote}
-        />
+        <NoteForm createNote={addNote} />
       </Toggleable>
     );
   };
@@ -91,19 +92,19 @@ const App = () => {
     setNewNote(event.target.value);
   };
 
-  const addNote = (event) => {
-    event.preventDefault();
-    console.log('button clicked', event.target);
-    const noteObject = {
-      content: newNote,
-      important: Math.random() < 0.5,
-    };
+  // const addNote = (event) => {
+  //   event.preventDefault();
+  //   console.log('button clicked', event.target);
+  //   const noteObject = {
+  //     content: newNote,
+  //     important: Math.random() < 0.5,
+  //   };
 
-    create(noteObject).then((createdNote) => {
-      setNotes(notes.concat(createdNote)); // remember: notes.concat returns a copy of the array with the object added
-      setNewNote('');
-    });
-  };
+  //   create(noteObject).then((createdNote) => {
+  //     setNotes(notes.concat(createdNote)); // remember: notes.concat returns a copy of the array with the object added
+  //     setNewNote('');
+  //   });
+  // };
 
   const toggleImportanceOf = (id) => () => {
     // remember this return a unique handler based on the id
