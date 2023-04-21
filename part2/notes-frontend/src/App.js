@@ -27,7 +27,6 @@ const Footer = () => {
 
 const Notification = ({ message }) => {
   if (message === null) {
-    // can we use falsey here?
     return null;
   }
 
@@ -38,8 +37,6 @@ const App = () => {
   const [notes, setNotes] = useState([]);
   const [showAll, setShowAll] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
 
   const notesToShow = showAll ? notes : notes.filter((note) => note.important);
@@ -53,13 +50,7 @@ const App = () => {
   const loginForm = () => {
     return (
       <Toggleable buttonLabel={'reveal'}>
-        <LoginForm
-          username={username}
-          handleUsernameOnChange={({ target: { value } }) => setUsername(value)}
-          password={password}
-          handlePasswordOnChange={({ target: { value } }) => setPassword(value)}
-          handleLogin={handleLogin}
-        />
+        <LoginForm handleLogin={handleLogin} />
       </Toggleable>
     );
   };
@@ -80,6 +71,7 @@ const App = () => {
       setToken(user.token);
     }
   }, []);
+
   useEffect(() => {
     console.log('effect');
     getAll().then((initialNotes) => {
@@ -106,13 +98,10 @@ const App = () => {
       });
   };
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const handleLogin = async (credentials) => {
     try {
-      const user = await login({ username, password });
+      const user = await login(credentials);
       setUser(user);
-      setUsername('');
-      setPassword('');
       window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user));
       setToken(user.token);
     } catch (exception) {
