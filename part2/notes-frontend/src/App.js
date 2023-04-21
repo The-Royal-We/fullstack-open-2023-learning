@@ -36,7 +36,6 @@ const Notification = ({ message }) => {
 
 const App = () => {
   const [notes, setNotes] = useState([]);
-  const [newNote, setNewNote] = useState('a new note...'); //to make this controlled by the app, **we** need to handle the state changes
   const [showAll, setShowAll] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
   const [username, setUsername] = useState('');
@@ -87,24 +86,6 @@ const App = () => {
       setNotes(initialNotes);
     });
   }, []);
-
-  const handleNoteChange = (event) => {
-    setNewNote(event.target.value);
-  };
-
-  // const addNote = (event) => {
-  //   event.preventDefault();
-  //   console.log('button clicked', event.target);
-  //   const noteObject = {
-  //     content: newNote,
-  //     important: Math.random() < 0.5,
-  //   };
-
-  //   create(noteObject).then((createdNote) => {
-  //     setNotes(notes.concat(createdNote)); // remember: notes.concat returns a copy of the array with the object added
-  //     setNewNote('');
-  //   });
-  // };
 
   const toggleImportanceOf = (id) => () => {
     // remember this return a unique handler based on the id
