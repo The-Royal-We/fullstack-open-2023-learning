@@ -27,6 +27,8 @@ const Toggleable = forwardRef((props, refs) => {
   );
 });
 
+Toggleable.displayName = 'Toggleable';
+
 Toggleable.propTypes = {
   buttonLabel: PropTypes.string.isRequired,
 };

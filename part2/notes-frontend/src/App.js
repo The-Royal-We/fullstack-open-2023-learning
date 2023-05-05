@@ -92,7 +92,7 @@ const App = () => {
         // the entire array with a new one that has our changed data
         setNotes(notes.map((n) => (n.id !== id ? n : updatedNote)));
       })
-      .catch((error) => {
+      .catch(() => {
         setErrorMessage(
           `the note '${note.content} was already deleted from the server'`,
         );
