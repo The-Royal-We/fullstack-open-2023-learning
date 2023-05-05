@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { useState, forwardRef, useImperativeHandle } from 'react';
 
 const Toggleable = forwardRef((props, refs) => {
@@ -25,5 +26,9 @@ const Toggleable = forwardRef((props, refs) => {
     </div>
   );
 });
+
+Toggleable.propTypes = {
+  buttonLabel: PropTypes.string.isRequired,
+};
 
 export default Toggleable;
